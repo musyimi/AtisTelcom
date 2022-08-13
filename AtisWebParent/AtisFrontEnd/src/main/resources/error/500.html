@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+
+<head th:replace="fragments :: page_head('Internal Server Error - Atis')" />
+<body>
+	<div class="container-fluid">
+		<div>
+
+			<div th:replace="navigation :: header_menu"></div>
+		</div>
+
+	</div>
+	
+	<div>
+		
+		<h2>Sorry, the server has encountered an error. Please contact the administrator</h2>
+	</div>
+
+	<div th:replace="fragments :: footer_menu"></div>
+
+	</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: page_head(${pageTitle})" />
+
+<body>
+	<div class="container-fluid">
+		<div>
+
+			<div th:replace="navigation :: header_menu"></div>
+		</div>
+
+		<div>
+			<h2>Customer Registration</h2>
+		</div>
+
+		<form class="row g-3" th:action="@{/create_customer}" method="post" th:object="${customer}"
+		    onsubmit="return checkEmailUnique(this);"
+		     >
+		    <div class="col-md-6">
+				<label for="inputEmail4" class="form-label">First Name</label>
+				<input type="text" th:field="*{firstName}" class="form-control" id="inputEmail4" required/>
+			</div>
+			<div class="col-md-6">
+				<label for="inputEmail4" class="form-label">Last Name</label>
+				<input type="text" th:field="*{lastName}" class="form-control" id="inputEmail4" required/>
+			</div>
+			<div class="col-md-6">
+				<label for="inputEmail4" class="form-label">Email</label>
+				<input type="email" th:field="*{email}" class="form-control" id="inputEmail4" required/>
+			</div>
+			<div class="col-md-6">
+				<label for="inputPassword4" class="form-label">Password</label>
+				<input type="password" th:field="*{password}" class="form-control" required
+				oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+				/>
+			</div>
+			<div class="col-md-6">
+				<label for="inputPassword4" class="form-label">Re-type Password</label>
+				<input type="password"  class="form-control" id="confirmPassword" required
+				oninput="checkPasswordMatch(this)"
+				/>
+			</div>
+			<div class="col-md-6">
+				<label for="inputPassword4" class="form-label">Phone Number</label>
+				<input type="text" th:field="*{phoneNumber}" class="form-control" required/>
+			</div>
+			
+			<div class="col-md-6">
+				<label for="inputPassword4" class="form-label">Address Line </label>
+				<input type="text" th:field="*{addressLine1}" class="form-control" required/>
+			</div>
+			
+			<div class="col-md-6">
+				<label for="inputCity" class="form-label">Postal Code</label>
+				<input type="text" th:field="*{postalCode}" class="form-control" id="inputCity" required/>
+			</div>
+			
+			<div class="col-md-6 ">
+				<label  class="form-label ">Country</label>
+				<select  class="form-control" th:field="*{country}">
+				    <th:block th:each="country : ${listCountries}">
+				       <option th:value="${country.id}">[[${country.name}]]</option>
+				    </th:block>
+					
+				</select>
+			</div>
+			
+			<div class="col-md-6">
+				<label for="inputCity" class="form-label">City</label>
+				<input type="text" th:field="*{city}" class="form-control" id="inputCity" required/>
+			</div>
+			
+			<div class="col-md-6">
+				<label for="inputCity" class="form-label">County</label>
+				<input type="text" th:field="*{county}" class="form-control" list="listCounties"  />
+				<datalist id="listCounties"></datalist>
+			</div>
+			
+			
+			
+			
+			
+			
+			<div class="col-12">
+				<button type="submit" class="btn btn-primary">Create Account</button>
+			</div>
+		</form>
+
+		<div th:replace="fragments :: footer"></div>
+	</div>
+	
+	<script type="text/javascript">
+	   
+	   contextPath = "[[@{/}]]";
+	
+	   var dropDownCountry;
+	   var dataListCounty;
+	   var fieldState;
+	   
+	   $(document).ready(function() {
+		dropDownCountry = $("#country");
+		dataListCounty = $("#listCounties");
+		fieldState = $("#state");
+		
+		dropDownCountry.on("change", function() {
+			loadCountiesForCountry();
+			fieldState.val("").focus();
+		});
+		
+	});
+	
+	function loadCountiesForCountry() {
+		selectedCountry = $("#country option:selected");
+		countryId = selectedCountry.val();
+		url = contextPath + "settings/list_counties_by_country/" + countryId;
+		
+		$.get(url, function(responseJSON) {
+			dataListCounty.empty();
+			
+			$.each(responseJSON, function(index, county) {
+				$("<option>").val(county.name).text(county.name).appendTo(dataListCounty)
+				
+			});
+			
+		});
+	}
+	
+	
+	    function checkPasswordMatch(confirmPassword) {
+		  if (confirmPassword.value != $("#password").val()) {
+			confirmPassword.setCustomValidity("Passwords do not match");
+		}else {
+			confirmPassword.setCustomValidity("");
+		}
+	}
+	
+	function checkEmailUnique(form) {
+	url = contextPath + "customers/check_unique_email";
+	customerEmail = $("#email").val();
+
+	csrfValue = $("input[name='_csrf']").val();
+	params = {email: customerEmail, _csrf: csrfValue};
+
+	
+	$.post(url, params, function(response) {
+		if (response == "OK") {
+			form.submit();
+		} else if (response == "Duplicated") {
+			alert("There is another having the email : " + customerEmail);
+		}
+		
+	});
+	
+	return false;
+}
+
+function showModalDialog(title, message) {
+	$("#modalTitle").text(title);
+	$("#modalBody").text(message);
+	$("#modalDialog").modal();
+}
+
+function showErrorModal(message) {
+	showModalDialog("Error", message);
+}
+
+function showWarningModal(message) {
+	showModalDialog("Warning", message);
+}
+	    
+	</script>
+</body>
+
+</html>

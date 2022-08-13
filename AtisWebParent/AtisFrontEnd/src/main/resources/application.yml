@@ -1,0 +1,31 @@
+server:
+  port: 80
+  servlet:
+    context-path: /Atis
+spring:
+  datasource:
+    password: mboka123!
+    url: jdbc:mysql://localhost:3306/atisdb
+    username: root
+  main:
+      allow-circular-references: true   
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    show-sql: true
+    
+  security:
+    oauth2:
+      client:
+        registration:
+           google:
+             client-id: 584796890300-mdhmoi5edf8mue3u67k65ha7q8dll75r.apps.googleusercontent.com
+             client-secret: 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
+             scope:
+             - email
+             - profile
+             
